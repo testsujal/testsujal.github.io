@@ -3,11 +3,12 @@ Write-Host "`n[Firewall Check] Checking all profiles..." -ForegroundColor Cyan
 $profiles = @("Domain", "Private", "Public")
 
 foreach ($profile in $profiles) {
-    $status = (netsh advfirewall show $profile state) -match 'State\s+(\w+)'
-    if ($status) {
+    $output = netsh advfirewall show $profile state 2>&1
+
+    if ($output -match "State\s+:\s+(\w+)") {
         $state = $Matches[1]
-        Write-Host "$profile Firewall: $state"
+        Write-Host "$profile Firewall: $state" -ForegroundColor Green
     } else {
-        Write-Host "$profile Firewall: Unknown" -ForegroundColor Yellow
+        Write-Host "$profile Firewall: Could not determine status ❌" -ForegroundColor Red
     }
 }
